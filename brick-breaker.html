@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brick Breaker 3D</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a14, #1a0a2e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: none;
+        }
+        
+        h1 {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        canvas {
+            background: #0a0a14;
+            border: 2px solid #00f3ff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            width: 100%;
+            display: block;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .info-item {
+            background: rgba(20, 20, 40, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(5px);
+            font-weight: bold;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 10px;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .screen p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+        
+        .tutorial-content {
+            max-width: 80%;
+            margin-bottom: 30px;
+        }
+        
+        .tutorial-step {
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .tutorial-step h3 {
+            color: #00f3ff;
+            margin-top: 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .instructions {
+            margin-top: 15px;
+            color: #aaaaaa;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+        
+        /* Custom Gaming Crosshair Cursor */
+        .gaming-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        .gaming-cursor .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background-color: #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line,
+        .gaming-cursor .vertical-line {
+            position: absolute;
+            background-color: #00f3ff;
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line {
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .vertical-line {
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .inner-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .outer-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .gaming-cursor.locked .center-dot {
+            width: 2px;
+            height: 2px;
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055, 0 0 30px #ff0055;
+        }
+
+        .gaming-cursor.locked .horizontal-line,
+        .gaming-cursor.locked .vertical-line {
+            background-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            width: 15px;
+        }
+
+        .gaming-cursor.locked .inner-ring {
+            width: 15px;
+            height: 15px;
+            border-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            animation: pulse 0.5s ease;
+        }
+
+        .gaming-cursor.locked .outer-ring {
+            width: 35px;
+            height: 35px;
+            border-color: rgba(255, 0, 85, 0.7);
+            box-shadow: 0 0 15px #ff0055;
+            animation: pulse-ring 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Gaming Crosshair Cursor -->
+    <div class="gaming-cursor">
+        <div class="center-dot"></div>
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
+        <div class="inner-ring"></div>
+        <div class="outer-ring"></div>
+    </div>
+    
+    <h1>Brick Breaker 3D</h1>
+    
+    <div class="game-container">
+        <div class="game-info">
+            <div class="info-item">Score: <span id="score">0</span></div>
+            <div class="info-item">Level: <span id="level">1</span></div>
+            <div class="info-item">Lives: <span id="lives">3</span></div>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        
+        <div id="startScreen" class="screen">
+            <h2>Brick Breaker 3D</h2>
+            <p>Break all the glowing neon bricks without letting the ball fall! Each level gets faster and more challenging.</p>
+            <button id="tutorialBtn">How to Play</button>
+            <button id="startBtn">Start Game</button>
+        </div>
+        
+        <div id="tutorialScreen" class="screen hidden">
+            <h2>How to Play</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-step">
+                    <h3>Controls</h3>
+                    <p>Use the <strong>LEFT</strong> and <strong>RIGHT</strong> arrow keys to move your paddle</p>
+                    <p>On mobile, drag your finger left or right to move the paddle</p>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Objective</h3>
+                    <p>Break all the glowing neon bricks with the ball</p>
+                    <p>Prevent the ball from falling below your paddle</p>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Scoring</h3>
+                    <p>Each brick broken: <strong>10 points × level</strong></p>
+                    <p>Complete a level: <strong>Advance to faster level</strong></p>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Lives</h3>
+                    <p>You start with <strong>3 lives</strong></p>
+                    <p>Lose a life when the ball falls below your paddle</p>
+                </div>
+            </div>
+            <button id="backToStartBtn">Back to Menu</button>
+        </div>
+        
+        <div id="levelCompleteScreen" class="screen hidden">
+            <h2>Level Complete!</h2>
+            <p>Great job! Get ready for the next level with faster ball speed.</p>
+            <button id="nextLevelBtn">Next Level</button>
+        </div>
+        
+        <div id="gameOverScreen" class="screen hidden">
+            <h2>Game Over</h2>
+            <p>Your final score: <span id="finalScore">0</span></p>
+            <button id="restartBtn">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="pauseBtn">Pause</button>
+    </div>
+    
+    <div class="instructions">
+        <p><strong>Controls:</strong> Use ← → arrow keys or drag on mobile to move the paddle</p>
+    </div>
+
+    <script>
+        // Game constants
+        const PADDLE_WIDTH = 100;
+        const PADDLE_HEIGHT = 15;
+        const PADDLE_SPEED = 8;
+        const BALL_SIZE = 10;
+        const BRICK_ROWS = 6;
+        const BRICK_COLS = 10;
+        const BRICK_WIDTH = 75;
+        const BRICK_HEIGHT = 25;
+        const BRICK_PADDING = 5;
+        
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const livesElement = document.getElementById('lives');
+        const finalScoreElement = document.getElementById('finalScore');
+        const startScreen = document.getElementById('startScreen');
+        const levelCompleteScreen = document.getElementById('levelCompleteScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const nextLevelBtn = document.getElementById('nextLevelBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        
+        // Game state
+        let score = 0;
+        let level = 1;
+        let lives = 3;
+        let gameRunning = false;
+        let gamePaused = false;
+        let gameLoop;
+        let paddle = {
+            x: canvas.width / 2 - PADDLE_WIDTH / 2,
+            y: canvas.height - 30,
+            width: PADDLE_WIDTH,
+            height: PADDLE_HEIGHT
+        };
+        let ball = {
+            x: canvas.width / 2,
+            y: canvas.height - 50,
+            dx: 4,
+            dy: -4,
+            size: BALL_SIZE,
+            speed: 4
+        };
+        let bricks = [];
+        let keys = {};
+        let touchX = null;
+        
+        // Initialize game
+        function initGame() {
+            // Reset game state
+            score = 0;
+            level = 1;
+            lives = 3;
+            bricks = [];
+            
+            // Update UI
+            scoreElement.textContent = score;
+            levelElement.textContent = level;
+            livesElement.textContent = lives;
+            
+            // Set paddle position
+            paddle.x = canvas.width / 2 - PADDLE_WIDTH / 2;
+            
+            // Set ball position and speed
+            resetBall();
+            
+            // Create bricks
+            createBricks();
+            
+            // Hide screens
+            startScreen.classList.add('hidden');
+            levelCompleteScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+        }
+        
+        // Create bricks
+        function createBricks() {
+            bricks = [];
+            const offsetX = (canvas.width - (BRICK_COLS * (BRICK_WIDTH + BRICK_PADDING))) / 2;
+            const offsetY = 50;
+            
+            // Level-based colors and speed
+            const colors = [
+                ['#ff0055', '#00f3ff', '#00ff88'],  // Level 1
+                ['#bd00ff', '#ffff00', '#ff8800'],  // Level 2
+                ['#0088ff', '#ff00aa', '#00ffcc'],  // Level 3
+                ['#ff5500', '#cc00ff', '#00ff44']   // Level 4+
+            ];
+            
+            const colorSet = colors[Math.min(level - 1, colors.length - 1)];
+            
+            for (let row = 0; row < BRICK_ROWS; row++) {
+                for (let col = 0; col < BRICK_COLS; col++) {
+                    bricks.push({
+                        x: offsetX + col * (BRICK_WIDTH + BRICK_PADDING),
+                        y: offsetY + row * (BRICK_HEIGHT + BRICK_PADDING),
+                        width: BRICK_WIDTH,
+                        height: BRICK_HEIGHT,
+                        color: colorSet[row % colorSet.length],
+                        visible: true
+                    });
+                }
+            }
+        }
+        
+        // Reset ball position
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height - 50;
+            ball.dx = ball.speed * (Math.random() > 0.5 ? 1 : -1);
+            ball.dy = -ball.speed;
+        }
+        
+        // Draw game
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#0a0a14';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw paddle with 3D effect
+            const gradient = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
+            gradient.addColorStop(0, '#00f3ff');
+            gradient.addColorStop(1, '#bd00ff');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+            
+            // Add 3D highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, 3);
+            
+            // Draw ball with glow
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+            const ballGradient = ctx.createRadialGradient(
+                ball.x, ball.y, 0,
+                ball.x, ball.y, ball.size
+            );
+            ballGradient.addColorStop(0, '#ffffff');
+            ballGradient.addColorStop(1, '#00f3ff');
+            ctx.fillStyle = ballGradient;
+            ctx.fill();
+            
+            // Add glow effect
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            // Draw bricks with 3D effect
+            bricks.forEach(brick => {
+                if (brick.visible) {
+                    // Brick base
+                    ctx.fillStyle = brick.color;
+                    ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
+                    
+                    // 3D highlight
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.fillRect(brick.x, brick.y, brick.width, 3);
+                    ctx.fillRect(brick.x, brick.y, 3, brick.height);
+                    
+                    // 3D shadow
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.fillRect(brick.x + brick.width - 3, brick.y, 3, brick.height);
+                    ctx.fillRect(brick.x, brick.y + brick.height - 3, brick.width, 3);
+                }
+            });
+        }
+        
+        // Move paddle
+        function movePaddle() {
+            if (keys['ArrowLeft'] && paddle.x > 0) {
+                paddle.x -= PADDLE_SPEED;
+            }
+            if (keys['ArrowRight'] && paddle.x < canvas.width - paddle.width) {
+                paddle.x += PADDLE_SPEED;
+            }
+            
+            // Touch movement
+            if (touchX !== null) {
+                paddle.x = touchX - paddle.width / 2;
+                if (paddle.x < 0) paddle.x = 0;
+                if (paddle.x > canvas.width - paddle.width) paddle.x = canvas.width - paddle.width;
+            }
+        }
+        
+        // Move ball
+        function moveBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+            
+            // Wall collision (left/right)
+            if (ball.x - ball.size < 0 || ball.x + ball.size > canvas.width) {
+                ball.dx *= -1;
+            }
+            
+            // Wall collision (top)
+            if (ball.y - ball.size < 0) {
+                ball.dy *= -1;
+            }
+            
+            // Paddle collision
+            if (
+                ball.y + ball.size > paddle.y &&
+                ball.y - ball.size < paddle.y + paddle.height &&
+                ball.x + ball.size > paddle.x &&
+                ball.x - ball.size < paddle.x + paddle.width
+            ) {
+                // Calculate bounce angle based on where the ball hits the paddle
+                const hitPosition = (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2);
+                ball.dx = hitPosition * ball.speed;
+                ball.dy = -Math.abs(ball.dy);
+            }
+            
+            // Brick collision
+            let bricksLeft = 0;
+            for (let i = 0; i < bricks.length; i++) {
+                const brick = bricks[i];
+                if (brick.visible) {
+                    bricksLeft++;
+                    if (
+                        ball.x + ball.size > brick.x &&
+                        ball.x - ball.size < brick.x + brick.width &&
+                        ball.y + ball.size > brick.y &&
+                        ball.y - ball.size < brick.y + brick.height
+                    ) {
+                        // Brick hit
+                        brick.visible = false;
+                        ball.dy *= -1;
+                        score += 10 * level;
+                        scoreElement.textContent = score;
+                        break;
+                    }
+                }
+            }
+            
+            // Check if level is complete
+            if (bricksLeft === 0) {
+                levelComplete();
+                return;
+            }
+            
+            // Ball falls below paddle
+            if (ball.y + ball.size > canvas.height) {
+                loseLife();
+            }
+        }
+        
+        // Level complete
+        function levelComplete() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            levelCompleteScreen.classList.remove('hidden');
+        }
+        
+        // Next level
+        function nextLevel() {
+            level++;
+            levelElement.textContent = level;
+            
+            // Increase ball speed
+            ball.speed += 0.5;
+            
+            // Reset ball
+            resetBall();
+            
+            // Create new bricks
+            createBricks();
+            
+            // Hide screen and resume game
+            levelCompleteScreen.classList.add('hidden');
+            gameRunning = true;
+            gameLoop = setInterval(gameStep, 1000 / 60);
+        }
+        
+        // Lose a life
+        function loseLife() {
+            lives--;
+            livesElement.textContent = lives;
+            
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                resetBall();
+            }
+        }
+        
+        // Game over
+        function gameOver() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            finalScoreElement.textContent = score;
+            gameOverScreen.classList.remove('hidden');
+        }
+        
+        // Game loop
+        function gameStep() {
+            if (gamePaused) return;
+            movePaddle();
+            moveBall();
+            draw();
+        }
+        
+        // Start game
+        function startGame() {
+            initGame();
+            gameRunning = true;
+            gameLoop = setInterval(gameStep, 1000 / 60); // 60 FPS
+        }
+        
+        // Toggle pause
+        function togglePause() {
+            gamePaused = !gamePaused;
+            pauseBtn.textContent = gamePaused ? 'Resume' : 'Pause';
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        nextLevelBtn.addEventListener('click', nextLevel);
+        restartBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Keyboard input
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        // Mouse/Touch input
+        canvas.addEventListener('mousemove', (e) => {
+            if (!gameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            touchX = e.clientX - rect.left;
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            if (!gameRunning) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            touchX = e.touches[0].clientX - rect.left;
+        });
+        
+        canvas.addEventListener('touchend', () => {
+            touchX = null;
+        });
+        
+        // Tutorial functionality
+        const tutorialBtn = document.getElementById('tutorialBtn');
+        const backToStartBtn = document.getElementById('backToStartBtn');
+        const tutorialScreen = document.getElementById('tutorialScreen');
+        
+        tutorialBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            tutorialScreen.classList.remove('hidden');
+        });
+        
+        backToStartBtn.addEventListener('click', () => {
+            tutorialScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        });
+        
+        // Custom cursor
+        const gamingCursor = document.querySelector('.gaming-cursor');
+        let cursorPosX = 0;
+        let cursorPosY = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let animationId;
+        
+        function updateCursorPosition() {
+            cursorPosX += (mouseX - cursorPosX) / 5;
+            cursorPosY += (mouseY - cursorPosY) / 5;
+            gamingCursor.style.left = cursorPosX + 'px';
+            gamingCursor.style.top = cursorPosY + 'px';
+            animationId = requestAnimationFrame(updateCursorPosition);
+        }
+        
+        // Start the cursor animation loop immediately
+        animationId = requestAnimationFrame(updateCursorPosition);
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!animationId) {
+                animationId = requestAnimationFrame(updateCursorPosition);
+            }
+        });
+        
+        // Cursor hover effects
+        const interactiveElements = document.querySelectorAll('button');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                gamingCursor.classList.add('locked');
+            });
+            element.addEventListener('mouseleave', () => {
+                gamingCursor.classList.remove('locked');
+            });
+        });
+    </script>
+</body>
+</html>

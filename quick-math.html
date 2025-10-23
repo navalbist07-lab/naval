@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Math Challenge</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a14, #1a0a2e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: none;
+        }
+        
+        h1 {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .math-problem {
+            font-size: 4rem;
+            text-align: center;
+            margin: 30px 0;
+            background: rgba(20, 20, 40, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(5px);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .answer-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            font-size: 2rem;
+            text-align: center;
+            background: rgba(20, 20, 40, 0.7);
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            margin: 20px auto;
+            display: block;
+            backdrop-filter: blur(5px);
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        
+        #submitBtn {
+            margin: 10px auto;
+            display: block;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+        }
+        
+        .timer-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0055, #00f3ff);
+            width: 100%;
+            transition: width 0.1s linear;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .info-item {
+            background: rgba(20, 20, 40, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(5px);
+            font-weight: bold;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 10px;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .screen p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .instructions {
+            margin-top: 15px;
+            color: #aaaaaa;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+        
+        .streak {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 10px 0;
+            color: #00f3ff;
+            font-weight: bold;
+        }
+        
+        /* Custom Gaming Crosshair Cursor */
+        .gaming-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        .gaming-cursor .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background-color: #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line,
+        .gaming-cursor .vertical-line {
+            position: absolute;
+            background-color: #00f3ff;
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line {
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .vertical-line {
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .inner-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .outer-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .gaming-cursor.locked .center-dot {
+            width: 2px;
+            height: 2px;
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055, 0 0 30px #ff0055;
+        }
+
+        .gaming-cursor.locked .horizontal-line,
+        .gaming-cursor.locked .vertical-line {
+            background-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            width: 15px;
+        }
+
+        .gaming-cursor.locked .inner-ring {
+            width: 15px;
+            height: 15px;
+            border-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            animation: pulse 0.5s ease;
+        }
+
+        .gaming-cursor.locked .outer-ring {
+            width: 35px;
+            height: 35px;
+            border-color: rgba(255, 0, 85, 0.7);
+            box-shadow: 0 0 15px #ff0055;
+            animation: pulse-ring 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+    
+    <style>
+        /* Tutorial Screen Styles */
+        .tutorial-content {
+            max-width: 80%;
+            text-align: left;
+        }
+        
+        .tutorial-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .tutorial-section h3 {
+            color: #00f3ff;
+            margin-top: 0;
+        }
+        
+        #tutorialBtn {
+            background: linear-gradient(90deg, #bd00ff, #00f3ff);
+            margin-top: 15px;
+        }
+        
+        #closeTutorialBtn {
+            margin-top: 20px;
+            background: linear-gradient(90deg, #ff0055, #bd00ff);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Gaming Crosshair Cursor -->
+    <div class="gaming-cursor">
+        <div class="center-dot"></div>
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
+        <div class="inner-ring"></div>
+        <div class="outer-ring"></div>
+    </div>
+    
+    <h1>Quick Math Challenge</h1>
+    
+    <div class="game-container">
+        <div class="game-info">
+            <div class="info-item">Score: <span id="score">0</span></div>
+            <div class="info-item">Time: <span id="time">30</span>s</div>
+            <div class="info-item">Streak: <span id="streak">0</span></div>
+        </div>
+        
+        <div class="timer-bar">
+            <div class="timer-fill" id="timerFill"></div>
+        </div>
+        
+        <div class="streak" id="streakDisplay">Current Streak: 0</div>
+        
+        <div class="math-problem" id="mathProblem">? + ? = ?</div>
+        
+        <input type="number" class="answer-input" id="answerInput" placeholder="Enter answer">
+        <button id="submitBtn">Submit Answer</button>
+        
+        <div id="startScreen" class="screen">
+            <h2>Quick Math Challenge</h2>
+            <p>Solve math problems as fast as you can! Each correct answer gives you more time. Wrong answers lose time. How high can you score?</p>
+            <button id="startBtn">Start Challenge</button>
+            <button id="tutorialBtn">How to Play</button>
+        </div>
+        
+        <div id="gameOverScreen" class="screen hidden">
+            <h2>Time's Up!</h2>
+            <p>Your final score: <span id="finalScore">0</span></p>
+            <p>Longest streak: <span id="finalStreak">0</span></p>
+            <button id="restartBtn">Play Again</button>
+        </div>
+        
+        <!-- Tutorial Screen -->
+        <div id="tutorialScreen" class="screen hidden">
+            <h2>How to Play Quick Math Challenge</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-section">
+                    <h3>Gameplay</h3>
+                    <p>Solve the math problems as quickly as possible. Type your answer in the input box and press <strong>ENTER</strong> or click outside the box to submit.</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Objective</h3>
+                    <p>Earn as many points as possible before time runs out. Each correct answer gives you more time, while wrong answers cost you time.</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Scoring</h3>
+                    <p>Each correct answer gives you <strong>10 base points</strong> plus bonus points equal to your current streak. Build your streak for higher scores!</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Time Management</h3>
+                    <p>Correct answers add <strong>3 seconds</strong> to your timer. Wrong answers subtract <strong>5 seconds</strong>. Maintain your streak to maximize your time!</p>
+                </div>
+                
+                <button id="closeTutorialBtn">Close Tutorial</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="pauseBtn">Pause</button>
+    </div>
+    
+    <div class="instructions">
+        <p><strong>How to Play:</strong> Solve the math problem and type your answer. Press ENTER or click Submit.</p>
+    </div>
+
+    <script>
+        // Game constants
+        const INITIAL_TIME = 30;
+        const TIME_PER_CORRECT = 3;
+        const TIME_PER_WRONG = 5;
+        const MAX_NUMBER = 20;
+        
+        // Game variables
+        const mathProblemElement = document.getElementById('mathProblem');
+        const answerInput = document.getElementById('answerInput');
+        const scoreElement = document.getElementById('score');
+        const timeElement = document.getElementById('time');
+        const streakElement = document.getElementById('streak');
+        const streakDisplay = document.getElementById('streakDisplay');
+        const timerFill = document.getElementById('timerFill');
+        const finalScoreElement = document.getElementById('finalScore');
+        const finalStreakElement = document.getElementById('finalStreak');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const tutorialBtn = document.getElementById('tutorialBtn');
+        const closeTutorialBtn = document.getElementById('closeTutorialBtn');
+        
+        // Game state
+        let score = 0;
+        let timeLeft = INITIAL_TIME;
+        let streak = 0;
+        let maxStreak = 0;
+        let gameRunning = false;
+        let gamePaused = false;
+        let gameLoop;
+        let timerInterval;
+        let currentProblem = {};
+        
+        // Initialize game
+        function initGame() {
+            // Reset game state
+            score = 0;
+            timeLeft = INITIAL_TIME;
+            streak = 0;
+            maxStreak = 0;
+            
+            // Update UI
+            scoreElement.textContent = score;
+            timeElement.textContent = timeLeft;
+            streakElement.textContent = streak;
+            streakDisplay.textContent = `Current Streak: ${streak}`;
+            timerFill.style.width = '100%';
+            
+            // Generate first problem
+            generateProblem();
+            
+            // Focus input
+            answerInput.value = '';
+            answerInput.focus();
+            
+            // Hide screens
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+        }
+        
+        // Generate a random math problem
+        function generateProblem() {
+            const operators = ['+', '-', '*'];
+            const operator = operators[Math.floor(Math.random() * operators.length)];
+            
+            let num1, num2, answer;
+            
+            switch (operator) {
+                case '+':
+                    num1 = Math.floor(Math.random() * MAX_NUMBER) + 1;
+                    num2 = Math.floor(Math.random() * MAX_NUMBER) + 1;
+                    answer = num1 + num2;
+                    break;
+                case '-':
+                    num1 = Math.floor(Math.random() * MAX_NUMBER) + 10;
+                    num2 = Math.floor(Math.random() * num1) + 1;
+                    answer = num1 - num2;
+                    break;
+                case '*':
+                    num1 = Math.floor(Math.random() * 10) + 1;
+                    num2 = Math.floor(Math.random() * 10) + 1;
+                    answer = num1 * num2;
+                    break;
+            }
+            
+            currentProblem = { num1, operator, num2, answer };
+            mathProblemElement.textContent = `${num1} ${operator} ${num2} = ?`;
+        }
+        
+        // Check answer
+        function checkAnswer() {
+            if (!gameRunning || gamePaused) return;
+            
+            const userAnswer = parseInt(answerInput.value);
+            
+            if (userAnswer === currentProblem.answer) {
+                // Correct answer
+                score += 10 + streak; // Bonus points for streak
+                streak++;
+                maxStreak = Math.max(maxStreak, streak);
+                timeLeft += TIME_PER_CORRECT;
+                
+                // Visual feedback
+                mathProblemElement.style.color = '#00ff88';
+                setTimeout(() => {
+                    mathProblemElement.style.color = 'white';
+                }, 300);
+            } else {
+                // Wrong answer
+                streak = 0;
+                timeLeft = Math.max(0, timeLeft - TIME_PER_WRONG);
+                
+                // Visual feedback
+                mathProblemElement.style.color = '#ff0055';
+                setTimeout(() => {
+                    mathProblemElement.style.color = 'white';
+                }, 300);
+            }
+            
+            // Update UI
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            streakDisplay.textContent = `Current Streak: ${streak}`;
+            timeElement.textContent = Math.ceil(timeLeft);
+            
+            // Generate new problem
+            generateProblem();
+            answerInput.value = '';
+            answerInput.focus();
+        }
+        
+        // Update timer
+        function updateTimer() {
+            if (gamePaused) return;
+            
+            timeLeft -= 0.1;
+            timeElement.textContent = Math.ceil(timeLeft);
+            
+            // Update timer bar
+            const percentage = (timeLeft / INITIAL_TIME) * 100;
+            timerFill.style.width = `${percentage}%`;
+            
+            // Change color when time is low
+            if (timeLeft < 10) {
+                timerFill.style.background = 'linear-gradient(90deg, #ff0055, #ff8800)';
+            } else {
+                timerFill.style.background = 'linear-gradient(90deg, #ff0055, #00f3ff)';
+            }
+            
+            // Check if time is up
+            if (timeLeft <= 0) {
+                gameOver();
+            }
+        }
+        
+        // Game over
+        function gameOver() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            clearInterval(timerInterval);
+            finalScoreElement.textContent = score;
+            finalStreakElement.textContent = maxStreak;
+            gameOverScreen.classList.remove('hidden');
+        }
+        
+        // Start game
+        function startGame() {
+            initGame();
+            gameRunning = true;
+            gameLoop = setInterval(updateTimer, 100); // Update timer every 100ms for smooth bar
+        }
+        
+        // Toggle pause
+        function togglePause() {
+            gamePaused = !gamePaused;
+            pauseBtn.textContent = gamePaused ? 'Resume' : 'Pause';
+            
+            if (gamePaused) {
+                answerInput.disabled = true;
+            } else {
+                answerInput.disabled = false;
+                answerInput.focus();
+            }
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Tutorial event listeners
+        tutorialBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            tutorialScreen.classList.remove('hidden');
+        });
+        
+        closeTutorialBtn.addEventListener('click', () => {
+            tutorialScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        });
+        
+        // Answer submission
+        answerInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+        
+        // Submit button event listener
+        submitBtn.addEventListener('click', checkAnswer);
+        
+        // Custom cursor
+        const gamingCursor = document.querySelector('.gaming-cursor');
+        let cursorPosX = 0;
+        let cursorPosY = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let animationId;
+        
+        function updateCursorPosition() {
+            cursorPosX += (mouseX - cursorPosX) / 5;
+            cursorPosY += (mouseY - cursorPosY) / 5;
+            gamingCursor.style.left = cursorPosX + 'px';
+            gamingCursor.style.top = cursorPosY + 'px';
+            animationId = requestAnimationFrame(updateCursorPosition);
+        }
+        
+        // Start the cursor animation loop immediately
+        animationId = requestAnimationFrame(updateCursorPosition);
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!animationId) {
+                animationId = requestAnimationFrame(updateCursorPosition);
+            }
+        });
+        
+        // Cursor hover effects
+        const interactiveElements = document.querySelectorAll('button, input');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                gamingCursor.classList.add('locked');
+            });
+            element.addEventListener('mouseleave', () => {
+                gamingCursor.classList.remove('locked');
+            });
+        });
+    </script>
+</body>
+</html>

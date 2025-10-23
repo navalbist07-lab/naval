@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Universe | Stats</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="stats.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Custom Gaming Crosshair Cursor -->
+    <div class="gaming-cursor">
+        <div class="center-dot"></div>
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
+        <div class="inner-ring"></div>
+        <div class="outer-ring"></div>
+    </div>
+
+    <!-- Theme Switcher Button -->
+    <button class="theme-switcher" id="themeSwitcher">
+        <i class="fas fa-gamepad"></i>
+        <span class="theme-tooltip" id="themeTooltip">Cyber Neon</span>
+    </button>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>Naval's <span>GamingUniverse</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="games.html">Games</a></li>
+                <li><a href="stats.html" class="active">Stats</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Stats Section -->
+    <section class="stats-hero">
+        <div class="container">
+            <h1>Gaming <span>Statistics Dashboard</span></h1>
+            <p class="stats-subtitle">Track your performance across multiple gaming platforms</p>
+            
+            <div class="stats-grid">
+                <!-- Free Fire Stats -->
+                <div class="stat-card">
+                    <div class="game-header">
+                        <div class="game-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h3>Free Fire</h3>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-item">
+                            <span class="stat-label">K/D Ratio</span>
+                            <span class="stat-value">3.2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank</span>
+                            <span class="stat-value">Diamond</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value">78</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 65%"></div>
+                                </div>
+                                <span>65%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Matches</span>
+                            <span class="stat-value">420</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- BGMI Stats -->
+                <div class="stat-card">
+                    <div class="game-header">
+                        <div class="game-icon">
+                            <i class="fas fa-military-rifle"></i>
+                        </div>
+                        <h3>BGMI</h3>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-item">
+                            <span class="stat-label">K/D Ratio</span>
+                            <span class="stat-value">4.1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank</span>
+                            <span class="stat-value">Crown</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value">125</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 72%"></div>
+                                </div>
+                                <span>72%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Matches</span>
+                            <span class="stat-value">380</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Valorant Stats -->
+                <div class="stat-card">
+                    <div class="game-header">
+                        <div class="game-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3>Valorant</h3>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-item">
+                            <span class="stat-label">K/D Ratio</span>
+                            <span class="stat-value">1.8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank</span>
+                            <span class="stat-value">Immortal 3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value">210</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 58%"></div>
+                                </div>
+                                <span>58%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Matches</span>
+                            <span class="stat-value">295</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CODM Stats -->
+                <div class="stat-card">
+                    <div class="game-header">
+                        <div class="game-icon">
+                            <i class="fas fa-skull-crossbones"></i>
+                        </div>
+                        <h3>CODM</h3>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-item">
+                            <span class="stat-label">K/D Ratio</span>
+                            <span class="stat-value">2.5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank</span>
+                            <span class="stat-value">Platinum</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value">95</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 68%"></div>
+                                </div>
+                                <span>68%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Matches</span>
+                            <span class="stat-value">310</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Apex Legends Stats -->
+                <div class="stat-card">
+                    <div class="game-header">
+                        <div class="game-icon">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <h3>Apex Legends</h3>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-item">
+                            <span class="stat-label">K/D Ratio</span>
+                            <span class="stat-value">2.1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank</span>
+                            <span class="stat-value">Gold</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value">340</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 45%"></div>
+                                </div>
+                                <span>45%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Matches</span>
+                            <span class="stat-value">180</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PUBG Stats -->
+                <div class="stat-card">
+                    <div class="game-header">
+                        <div class="game-icon">
+                            <i class="fas fa-parachute-box"></i>
+                        </div>
+                        <h3>PUBG</h3>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-item">
+                            <span class="stat-label">K/D Ratio</span>
+                            <span class="stat-value">3.8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank</span>
+                            <span class="stat-value">Ace</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value">155</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate</span>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 32%"></div>
+                                </div>
+                                <span>32%</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Matches</span>
+                            <span class="stat-value">220</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Naval's Gaming Universe. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="main.js"></script>
+    <script src="theme-switcher.js"></script>
+</body>
+</html>

@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoop Shot Challenge</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a14, #1a0a2e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: none;
+        }
+        
+        h1 {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        canvas {
+            background: #0a0a14;
+            border: 2px solid #00f3ff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            width: 100%;
+            display: block;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .info-item {
+            background: rgba(20, 20, 40, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(5px);
+            font-weight: bold;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 10px;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .screen p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .instructions {
+            margin-top: 15px;
+            color: #aaaaaa;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+        
+        /* Custom Gaming Crosshair Cursor */
+        .gaming-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        .gaming-cursor .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background-color: #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line,
+        .gaming-cursor .vertical-line {
+            position: absolute;
+            background-color: #00f3ff;
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line {
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .vertical-line {
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .inner-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .outer-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .gaming-cursor.locked .center-dot {
+            width: 2px;
+            height: 2px;
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055, 0 0 30px #ff0055;
+        }
+
+        .gaming-cursor.locked .horizontal-line,
+        .gaming-cursor.locked .vertical-line {
+            background-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            width: 15px;
+        }
+
+        .gaming-cursor.locked .inner-ring {
+            width: 15px;
+            height: 15px;
+            border-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            animation: pulse 0.5s ease;
+        }
+
+        .gaming-cursor.locked .outer-ring {
+            width: 35px;
+            height: 35px;
+            border-color: rgba(255, 0, 85, 0.7);
+            box-shadow: 0 0 15px #ff0055;
+            animation: pulse-ring 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+    
+    <style>
+        /* Tutorial Screen Styles */
+        .tutorial-content {
+            max-width: 80%;
+            text-align: left;
+        }
+        
+        .tutorial-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .tutorial-section h3 {
+            color: #00f3ff;
+            margin-top: 0;
+        }
+        
+        #tutorialBtn {
+            background: linear-gradient(90deg, #bd00ff, #00f3ff);
+            margin-top: 15px;
+        }
+        
+        #closeTutorialBtn {
+            margin-top: 20px;
+            background: linear-gradient(90deg, #ff0055, #bd00ff);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Gaming Crosshair Cursor -->
+    <div class="gaming-cursor">
+        <div class="center-dot"></div>
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
+        <div class="inner-ring"></div>
+        <div class="outer-ring"></div>
+    </div>
+    
+    <h1>Hoop Shot Challenge</h1>
+    
+    <div class="game-container">
+        <div class="game-info">
+            <div class="info-item">Score: <span id="score">0</span></div>
+            <div class="info-item">Shots: <span id="shots">0</span></div>
+            <div class="info-item">Accuracy: <span id="accuracy">0</span>%</div>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        
+        <div id="startScreen" class="screen">
+            <h2>Hoop Shot Challenge</h2>
+            <p>Flick the basketball to shoot it through the hoop! The more difficult shots you make, the more points you earn.</p>
+            <button id="startBtn">Start Game</button>
+            <button id="tutorialBtn">How to Play</button>
+        </div>
+        
+        <div id="gameOverScreen" class="screen hidden">
+            <h2>Game Over!</h2>
+            <p>Your final score: <span id="finalScore">0</span></p>
+            <p>Shots taken: <span id="finalShots">0</span></p>
+            <p>Accuracy: <span id="finalAccuracy">0</span>%</p>
+            <button id="restartBtn">Play Again</button>
+        </div>
+        
+        <!-- Tutorial Screen -->
+        <div id="tutorialScreen" class="screen hidden">
+            <h2>How to Play Hoop Shot Challenge</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-section">
+                    <h3>Controls</h3>
+                    <p><strong>Click and drag</strong> on the basketball to aim your shot. The further you drag, the more power your shot will have.</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Objective</h3>
+                    <p>Shoot the basketball through the moving hoop to score points. The further away you are from the hoop, the more points you earn.</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Scoring</h3>
+                    <p>Points are awarded based on the difficulty of your shot. Shots from further away are worth more points. Try to get the highest score possible!</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Tips</h3>
+                    <p>1. Aim for the center of the hoop<br>
+                       2. Watch the moving hoop and time your shots<br>
+                       3. Control your power by how far you drag<br>
+                       4. The ball bounces realistically, so use the backboard if needed</p>
+                </div>
+                
+                <button id="closeTutorialBtn">Close Tutorial</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="pauseBtn">Pause</button>
+    </div>
+    
+    <div class="instructions">
+        <p><strong>Controls:</strong> Click and drag to aim, release to shoot the ball</p>
+    </div>
+
+    <script>
+        // Game constants
+        const BALL_RADIUS = 15;
+        const HOOP_WIDTH = 120;
+        const HOOP_HEIGHT = 5;
+        const GRAVITY = 0.2;
+        const FRICTION = 0.99;
+        
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const shotsElement = document.getElementById('shots');
+        const accuracyElement = document.getElementById('accuracy');
+        const finalScoreElement = document.getElementById('finalScore');
+        const finalShotsElement = document.getElementById('finalShots');
+        const finalAccuracyElement = document.getElementById('finalAccuracy');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const tutorialScreen = document.getElementById('tutorialScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const tutorialBtn = document.getElementById('tutorialBtn');
+        const closeTutorialBtn = document.getElementById('closeTutorialBtn');
+        
+        // Game state
+        let score = 0;
+        let shots = 0;
+        let gameRunning = false;
+        let gamePaused = false;
+        let gameLoop;
+        let ball = {
+            x: 100,
+            y: canvas.height - 100,
+            radius: BALL_RADIUS,
+            dx: 0,
+            dy: 0,
+            isMoving: false
+        };
+        let hoop = {
+            x: canvas.width - 200,
+            y: 150,
+            width: HOOP_WIDTH,
+            height: HOOP_HEIGHT
+        };
+        let isDragging = false;
+        let dragStartX, dragStartY;
+        let dragEndX, dragEndY;
+        let power = 0;
+        let gameOverTimer = 0;
+        
+        // Initialize game
+        function initGame() {
+            // Reset game state
+            score = 0;
+            shots = 0;
+            gameOverTimer = 0;
+            
+            // Reset ball
+            resetBall();
+            
+            // Update UI
+            scoreElement.textContent = score;
+            shotsElement.textContent = shots;
+            accuracyElement.textContent = shots > 0 ? Math.round((score / (shots * 10)) * 100) : 0;
+            
+            // Hide screens
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+        }
+        
+        // Reset ball position
+        function resetBall() {
+            ball.x = 100;
+            ball.y = canvas.height - 100;
+            ball.dx = 0;
+            ball.dy = 0;
+            ball.isMoving = false;
+        }
+        
+        // Draw game
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#0a0a14';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw court
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+            
+            // Draw hoop with 3D effect
+            // Backboard
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(hoop.x - 10, hoop.y - 50, 10, 100);
+            
+            // Hoop
+            ctx.strokeStyle = '#ff0055';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(hoop.x, hoop.y);
+            ctx.lineTo(hoop.x + hoop.width, hoop.y);
+            ctx.stroke();
+            
+            // Hoop supports
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(hoop.x, hoop.y);
+            ctx.lineTo(hoop.x - 10, hoop.y - 50);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(hoop.x + hoop.width, hoop.y);
+            ctx.lineTo(hoop.x + hoop.width + 10, hoop.y - 50);
+            ctx.stroke();
+            
+            // Draw ball with 3D effect
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            
+            // Create gradient for ball
+            const ballGradient = ctx.createRadialGradient(
+                ball.x - ball.radius/3, ball.y - ball.radius/3, 0,
+                ball.x, ball.y, ball.radius
+            );
+            ballGradient.addColorStop(0, '#ffffff');
+            ballGradient.addColorStop(0.7, '#ff8800');
+            ballGradient.addColorStop(1, '#ff5500');
+            
+            ctx.fillStyle = ballGradient;
+            ctx.fill();
+            
+            // Draw basketball lines
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius - 3, 0, Math.PI);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius - 3, Math.PI, 0);
+            ctx.stroke();
+            
+            // Draw aim line when dragging
+            if (isDragging) {
+                ctx.strokeStyle = '#00f3ff';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(ball.x, ball.y);
+                ctx.lineTo(dragEndX, dragEndY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Draw power indicator
+                const powerWidth = Math.min(power * 2, 100);
+                ctx.fillStyle = '#00f3ff';
+                ctx.fillRect(ball.x - 50, ball.y + 30, powerWidth, 10);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(ball.x - 50, ball.y + 30, 100, 10);
+            }
+        }
+        
+        // Update game state
+        function update() {
+            if (gamePaused) return;
+            
+            // Move ball if it's in motion
+            if (ball.isMoving) {
+                ball.x += ball.dx;
+                ball.y += ball.dy;
+                ball.dy += GRAVITY;
+                
+                // Apply friction
+                ball.dx *= FRICTION;
+                ball.dy *= FRICTION;
+                
+                // Bounce off walls
+                if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+                    ball.dx *= -0.8;
+                    ball.x = ball.x - ball.radius < 0 ? ball.radius : canvas.width - ball.radius;
+                }
+                
+                // Bounce off floor
+                if (ball.y + ball.radius > canvas.height - 50) {
+                    ball.y = canvas.height - 50 - ball.radius;
+                    ball.dy *= -0.7;
+                    ball.dx *= 0.9;
+                    
+                    // Stop ball if it's moving very slowly
+                    if (Math.abs(ball.dy) < 0.5 && Math.abs(ball.dx) < 0.5) {
+                        ball.dy = 0;
+                        ball.dx = 0;
+                        ball.isMoving = false;
+                        
+                        // Reset ball after a delay
+                        setTimeout(() => {
+                            if (gameRunning) {
+                                resetBall();
+                            }
+                        }, 1000);
+                    }
+                }
+                
+                // Check if ball goes through hoop
+                if (!ball.isMoving) {
+                    // Check if ball is within hoop area
+                    if (ball.x > hoop.x && ball.x < hoop.x + hoop.width &&
+                        ball.y > hoop.y - 20 && ball.y < hoop.y + 20) {
+                        // Score based on difficulty (distance from starting position)
+                        const distance = Math.sqrt(
+                            Math.pow(ball.x - 100, 2) + 
+                            Math.pow(ball.y - (canvas.height - 100), 2)
+                        );
+                        const points = Math.min(Math.floor(distance / 20), 50);
+                        score += points;
+                        scoreElement.textContent = score;
+                        
+                        // Update accuracy
+                        accuracyElement.textContent = shots > 0 ? Math.round((score / (shots * 10)) * 100) : 0;
+                        
+                        // Play success sound (if implemented)
+                    }
+                }
+            }
+            
+            // Move hoop slightly for challenge
+            hoop.x = canvas.width - 200 + Math.sin(Date.now() / 1000) * 30;
+        }
+        
+        // Shoot ball
+        function shootBall() {
+            if (!gameRunning || gamePaused || ball.isMoving) return;
+            
+            shots++;
+            shotsElement.textContent = shots;
+            
+            // Calculate velocity based on drag distance
+            const dx = dragStartX - dragEndX;
+            const dy = dragStartY - dragEndY;
+            
+            // Apply velocity to ball
+            ball.dx = dx * 0.2;
+            ball.dy = dy * 0.2;
+            ball.isMoving = true;
+            
+            // Update accuracy
+            accuracyElement.textContent = shots > 0 ? Math.round((score / (shots * 10)) * 100) : 0;
+        }
+        
+        // Game over
+        function gameOver() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            finalScoreElement.textContent = score;
+            finalShotsElement.textContent = shots;
+            finalAccuracyElement.textContent = shots > 0 ? Math.round((score / (shots * 10)) * 100) : 0;
+            gameOverScreen.classList.remove('hidden');
+        }
+        
+        // Game loop
+        function gameStep() {
+            update();
+            draw();
+        }
+        
+        // Start game
+        function startGame() {
+            initGame();
+            gameRunning = true;
+            gameLoop = setInterval(gameStep, 1000 / 60); // 60 FPS
+        }
+        
+        // Toggle pause
+        function togglePause() {
+            gamePaused = !gamePaused;
+            pauseBtn.textContent = gamePaused ? 'Resume' : 'Pause';
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Tutorial event listeners
+        tutorialBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            tutorialScreen.classList.remove('hidden');
+        });
+        
+        closeTutorialBtn.addEventListener('click', () => {
+            tutorialScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        });
+        
+        // Mouse events for aiming
+        canvas.addEventListener('mousedown', (e) => {
+            if (!gameRunning || gamePaused || ball.isMoving) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Check if click is on ball
+            const distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2));
+            if (distance < ball.radius) {
+                isDragging = true;
+                dragStartX = x;
+                dragStartY = y;
+                dragEndX = x;
+                dragEndY = y;
+            }
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            dragEndX = e.clientX - rect.left;
+            dragEndY = e.clientY - rect.top;
+            
+            // Calculate power based on drag distance
+            const dx = dragStartX - dragEndX;
+            const dy = dragStartY - dragEndY;
+            power = Math.min(Math.sqrt(dx * dx + dy * dy) / 5, 100);
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                shootBall();
+            }
+        });
+        
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!gameRunning || gamePaused || ball.isMoving) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.touches[0].clientX - rect.left;
+            const y = e.touches[0].clientY - rect.top;
+            
+            // Check if touch is on ball
+            const distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2));
+            if (distance < ball.radius) {
+                isDragging = true;
+                dragStartX = x;
+                dragStartY = y;
+                dragEndX = x;
+                dragEndY = y;
+            }
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isDragging) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            dragEndX = e.touches[0].clientX - rect.left;
+            dragEndY = e.touches[0].clientY - rect.top;
+            
+            // Calculate power based on drag distance
+            const dx = dragStartX - dragEndX;
+            const dy = dragStartY - dragEndY;
+            power = Math.min(Math.sqrt(dx * dx + dy * dy) / 5, 100);
+        });
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (isDragging) {
+                isDragging = false;
+                shootBall();
+            }
+        });
+        
+        // Custom cursor
+        const gamingCursor = document.querySelector('.gaming-cursor');
+        let cursorPosX = 0;
+        let cursorPosY = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let animationId;
+        
+        function updateCursorPosition() {
+            cursorPosX += (mouseX - cursorPosX) / 5;
+            cursorPosY += (mouseY - cursorPosY) / 5;
+            gamingCursor.style.left = cursorPosX + 'px';
+            gamingCursor.style.top = cursorPosY + 'px';
+            animationId = requestAnimationFrame(updateCursorPosition);
+        }
+        
+        // Start the cursor animation loop immediately
+        animationId = requestAnimationFrame(updateCursorPosition);
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!animationId) {
+                animationId = requestAnimationFrame(updateCursorPosition);
+            }
+        });
+        
+        // Cursor hover effects
+        const interactiveElements = document.querySelectorAll('button');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                gamingCursor.classList.add('locked');
+            });
+            element.addEventListener('mouseleave', () => {
+                gamingCursor.classList.remove('locked');
+            });
+        });
+    </script>
+</body>
+</html>

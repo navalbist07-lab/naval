@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Universe | Games</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="games.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Custom Gaming Crosshair Cursor -->
+    <div class="gaming-cursor">
+        <div class="center-dot"></div>
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
+        <div class="inner-ring"></div>
+        <div class="outer-ring"></div>
+    </div>
+
+    <!-- Theme Switcher Button -->
+    <button class="theme-switcher" id="themeSwitcher">
+        <i class="fas fa-gamepad"></i>
+        <span class="theme-tooltip" id="themeTooltip">Cyber Neon</span>
+    </button>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>Naval's <span>GamingUniverse</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="games.html" class="active">Games</a></li>
+                <li><a href="stats.html">Stats</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Games Section -->
+    <section class="games-hero">
+        <div class="container">
+            <h1>Our <span>Mini-Games Collection</span></h1>
+            <p class="games-subtitle">Play these fully functional games directly in your browser</p>
+            
+            <div class="games-grid">
+                <!-- Game 1 -->
+                <div class="game-card" data-game="brick-breaker">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Brick Breaker 3D">
+                    </div>
+                    <div class="game-info">
+                        <h3>Brick Breaker 3D</h3>
+                        <p>Break glowing neon bricks with a bouncing ball</p>
+                        <button class="play-button glow-button" onclick="window.open('brick-breaker.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 2 -->
+                <div class="game-card" data-game="target-shooter">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1551103782-8ab0493f16b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Target Shooter">
+                    </div>
+                    <div class="game-info">
+                        <h3>Target Shooter</h3>
+                        <p>Shoot moving targets with precision aiming</p>
+                        <button class="play-button glow-button" onclick="window.open('target-shooter.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 3 -->
+                <div class="game-card" data-game="neon-racer">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Neon Racer">
+                    </div>
+                    <div class="game-info">
+                        <h3>Neon Racer</h3>
+                        <p>Endless runner racing through neon city</p>
+                        <button class="play-button glow-button" onclick="window.open('neon-racer.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 4 -->
+                <div class="game-card" data-game="snake-evolution">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Snake Evolution">
+                    </div>
+                    <div class="game-info">
+                        <h3>Snake Evolution</h3>
+                        <p>Modern 3D snake game with glowing effects</p>
+                        <button class="play-button glow-button" onclick="window.open('snake-evolution.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 5 -->
+                <div class="game-card" data-game="space-shooter">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Space Shooter">
+                    </div>
+                    <div class="game-info">
+                        <h3>Space Shooter</h3>
+                        <p>Defend Earth from alien invaders</p>
+                        <button class="play-button glow-button" onclick="window.open('space-shooter.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 6 -->
+                <div class="game-card" data-game="memory-flip">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1551103782-8ab0493f16b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Memory Flip Cards">
+                    </div>
+                    <div class="game-info">
+                        <h3>Memory Flip Cards</h3>
+                        <p>Find matching pairs in this memory challenge</p>
+                        <button class="play-button glow-button" onclick="window.open('memory-flip.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 7 -->
+                <div class="game-card" data-game="hoop-shot">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Hoop Shot Challenge">
+                    </div>
+                    <div class="game-info">
+                        <h3>Hoop Shot Challenge</h3>
+                        <p>Flick the basketball through the hoop</p>
+                        <button class="play-button glow-button" onclick="window.open('hoop-shot.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 8 -->
+                <div class="game-card" data-game="jump-dash">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Jump Dash">
+                    </div>
+                    <div class="game-info">
+                        <h3>Jump Dash</h3>
+                        <p>Jump across platforms as a stick character</p>
+                        <button class="play-button glow-button" onclick="window.open('jump-dash.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 9 -->
+                <div class="game-card" data-game="quick-math">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1551103782-8ab0493f16b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Quick Math Challenge">
+                    </div>
+                    <div class="game-info">
+                        <h3>Quick Math Challenge</h3>
+                        <p>Solve math problems under time pressure</p>
+                        <button class="play-button glow-button" onclick="window.open('quick-math.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+                
+                <!-- Game 10 -->
+                <div class="game-card" data-game="aim-trainer">
+                    <div class="game-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Aim Trainer Pro">
+                    </div>
+                    <div class="game-info">
+                        <h3>Aim Trainer Pro</h3>
+                        <p>Improve your FPS aiming skills</p>
+                        <button class="play-button glow-button" onclick="window.open('aim-trainer.html', '_blank')">Play Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Modal -->
+    <div class="game-modal" id="gameModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="game-container">
+                <iframe id="gameFrame" src="" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Naval's Gaming Universe. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="main.js"></script>
+    <script src="games.js"></script>
+    <script src="theme-switcher.js"></script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+/* About Page Styles */
+
+.about-hero {
+    padding: 100px 0 50px;
+    background: var(--darker-bg);
+    min-height: 100vh;
+}
+
+.about-hero h1 {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 3rem;
+}
+
+.about-hero h1 span {
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.about-content {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.about-text {
+    flex: 1;
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    color: var(--text-gray);
+}
+
+.about-icons {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.icon-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 20, 40, 0.5);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    perspective: 1000px;
+}
+
+.icon-container:hover {
+    transform: rotateY(20deg) rotateX(10deg);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+}
+
+/* Theme-specific icon container styles */
+[data-theme="inferno-red"] .icon-container {
+    border: 1px solid rgba(255, 136, 0, 0.3);
+}
+
+[data-theme="inferno-red"] .icon-container:hover {
+    box-shadow: 0 0 30px rgba(255, 136, 0, 0.3);
+}
+
+[data-theme="electric-blue"] .icon-container {
+    border: 1px solid rgba(0, 136, 255, 0.3);
+}
+
+[data-theme="electric-blue"] .icon-container:hover {
+    box-shadow: 0 0 30px rgba(0, 136, 255, 0.3);
+}
+
+[data-theme="toxic-green"] .icon-container {
+    border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+[data-theme="toxic-green"] .icon-container:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+}
+
+[data-theme="galaxy-purple"] .icon-container {
+    border: 1px solid rgba(189, 0, 255, 0.3);
+}
+
+[data-theme="galaxy-purple"] .icon-container:hover {
+    box-shadow: 0 0 30px rgba(189, 0, 255, 0.3);
+}
+
+.gaming-icon {
+    font-size: 4rem;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Skills Section */
+.skills {
+    padding: 5rem 0;
+    background: var(--dark-bg);
+}
+
+.skills h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.skills h2 span {
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.skill-card {
+    background: rgba(20, 20, 40, 0.5);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 1px solid rgba(0, 243, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* Theme-specific skill card styles */
+[data-theme="inferno-red"] .skill-card {
+    border: 1px solid rgba(255, 136, 0, 0.1);
+}
+
+[data-theme="electric-blue"] .skill-card {
+    border: 1px solid rgba(0, 136, 255, 0.1);
+}
+
+[data-theme="toxic-green"] .skill-card {
+    border: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+[data-theme="galaxy-purple"] .skill-card {
+    border: 1px solid rgba(189, 0, 255, 0.1);
+}
+
+.skill-card h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    border-radius: 5px;
+    position: relative;
+}
+
+.progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progress-glow 2s infinite;
+}
+
+@keyframes progress-glow {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skill-card span {
+    float: right;
+    color: var(--neon-blue);
+    font-weight: bold;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .icon-container {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .gaming-icon {
+        font-size: 3rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .about-hero {
+        padding: 80px 0 30px;
+    }
+    
+    .about-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .about-text p {
+        font-size: 1rem;
+    }
+    
+    .icon-container {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .gaming-icon {
+        font-size: 2.5rem;
+    }
+}

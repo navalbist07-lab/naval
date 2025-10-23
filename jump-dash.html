@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jump Dash</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a14, #1a0a2e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: none;
+        }
+        
+        h1 {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        canvas {
+            background: linear-gradient(to bottom, #0a0a14, #1a0a2e);
+            border: 2px solid #00f3ff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            width: 100%;
+            display: block;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .info-item {
+            background: rgba(20, 20, 40, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(5px);
+            font-weight: bold;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 10px;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .screen p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .instructions {
+            margin-top: 15px;
+            color: #aaaaaa;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+        
+        /* Custom Gaming Crosshair Cursor */
+        .gaming-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        .gaming-cursor .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background-color: #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line,
+        .gaming-cursor .vertical-line {
+            position: absolute;
+            background-color: #00f3ff;
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line {
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .vertical-line {
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .inner-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .outer-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .gaming-cursor.locked .center-dot {
+            width: 2px;
+            height: 2px;
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055, 0 0 30px #ff0055;
+        }
+
+        .gaming-cursor.locked .horizontal-line,
+        .gaming-cursor.locked .vertical-line {
+            background-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            width: 15px;
+        }
+
+        .gaming-cursor.locked .inner-ring {
+            width: 15px;
+            height: 15px;
+            border-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            animation: pulse 0.5s ease;
+        }
+
+        .gaming-cursor.locked .outer-ring {
+            width: 35px;
+            height: 35px;
+            border-color: rgba(255, 0, 85, 0.7);
+            box-shadow: 0 0 15px #ff0055;
+            animation: pulse-ring 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+    
+    <style>
+        /* Tutorial Screen Styles */
+        .tutorial-content {
+            max-width: 80%;
+            text-align: left;
+        }
+        
+        .tutorial-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .tutorial-section h3 {
+            color: #00f3ff;
+            margin-top: 0;
+        }
+        
+        #tutorialBtn {
+            background: linear-gradient(90deg, #bd00ff, #00f3ff);
+            margin-top: 15px;
+        }
+        
+        #closeTutorialBtn {
+            margin-top: 20px;
+            background: linear-gradient(90deg, #ff0055, #bd00ff);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Gaming Crosshair Cursor -->
+    <div class="gaming-cursor">
+        <div class="center-dot"></div>
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
+        <div class="inner-ring"></div>
+        <div class="outer-ring"></div>
+    </div>
+    
+    <h1>Jump Dash</h1>
+    
+    <div class="game-container">
+        <div class="game-info">
+            <div class="info-item">Distance: <span id="distance">0</span>m</div>
+            <div class="info-item">Speed: <span id="speed">0</span></div>
+            <div class="info-item">Jumps: <span id="jumps">0</span></div>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        
+        <div id="startScreen" class="screen">
+            <h2>Jump Dash</h2>
+            <p>Help the stick character jump across moving platforms! Press space or tap to jump. Don't fall or it's game over!</p>
+            <button id="startBtn">Start Game</button>
+            <button id="tutorialBtn">How to Play</button>
+        </div>
+        
+        <div id="gameOverScreen" class="screen hidden">
+            <h2>Game Over!</h2>
+            <p>Distance traveled: <span id="finalDistance">0</span>m</p>
+            <p>Jumps made: <span id="finalJumps">0</span></p>
+            <button id="restartBtn">Play Again</button>
+        </div>
+        
+        <!-- Tutorial Screen -->
+        <div id="tutorialScreen" class="screen hidden">
+            <h2>How to Play Jump Dash</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-section">
+                    <h3>Controls</h3>
+                    <p>Press the <strong>SPACEBAR</strong>, <strong>CLICK</strong>, or <strong>TAP</strong> to make your character jump from platform to platform.</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Objective</h3>
+                    <p>Jump across the moving platforms and travel as far as possible without falling off the screen.</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Gameplay</h3>
+                    <p>The game speeds up over time, making it increasingly challenging to land on platforms. Time your jumps carefully!</p>
+                </div>
+                
+                <div class="tutorial-section">
+                    <h3>Scoring</h3>
+                    <p>Your score is based on the distance traveled (in meters) and the number of successful jumps you make. Go for a high score!</p>
+                </div>
+                
+                <button id="closeTutorialBtn">Close Tutorial</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="pauseBtn">Pause</button>
+    </div>
+    
+    <div class="instructions">
+        <p><strong>Controls:</strong> Press SPACE or tap to jump</p>
+    </div>
+
+    <script>
+        // Game constants
+        const PLAYER_WIDTH = 20;
+        const PLAYER_HEIGHT = 40;
+        const GRAVITY = 0.5;
+        const JUMP_FORCE = -12;
+        const PLATFORM_WIDTH_MIN = 80;
+        const PLATFORM_WIDTH_MAX = 200;
+        const PLATFORM_GAP_MIN = 100;
+        const PLATFORM_GAP_MAX = 200;
+        const INITIAL_SPEED = 3;
+        const SPEED_INCREMENT = 0.001;
+        
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const distanceElement = document.getElementById('distance');
+        const speedElement = document.getElementById('speed');
+        const jumpsElement = document.getElementById('jumps');
+        const finalDistanceElement = document.getElementById('finalDistance');
+        const finalJumpsElement = document.getElementById('finalJumps');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        
+        // Game state
+        let distance = 0;
+        let jumps = 0;
+        let speed = INITIAL_SPEED;
+        let gameRunning = false;
+        let gamePaused = false;
+        let gameLoop;
+        let player = {
+            x: 100,
+            y: canvas.height - 100,
+            width: PLAYER_WIDTH,
+            height: PLAYER_HEIGHT,
+            dy: 0,
+            isJumping: false
+        };
+        let platforms = [];
+        let clouds = [];
+        let keys = {};
+        let cameraOffset = 0;
+        
+        // Initialize game
+        function initGame() {
+            // Reset game state
+            distance = 0;
+            jumps = 0;
+            speed = INITIAL_SPEED;
+            cameraOffset = 0;
+            platforms = [];
+            clouds = [];
+            
+            // Reset player
+            player.x = 100;
+            player.y = canvas.height - 100;
+            player.dy = 0;
+            player.isJumping = false;
+            
+            // Update UI
+            distanceElement.textContent = Math.floor(distance);
+            speedElement.textContent = speed.toFixed(1);
+            jumpsElement.textContent = jumps;
+            
+            // Create initial platforms
+            createInitialPlatforms();
+            
+            // Create clouds for parallax background
+            createClouds();
+            
+            // Hide screens
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+        }
+        
+        // Create initial platforms
+        function createInitialPlatforms() {
+            // Starting platform
+            platforms.push({
+                x: 0,
+                y: canvas.height - 50,
+                width: 300,
+                height: 20
+            });
+            
+            // Additional platforms
+            let lastX = 300;
+            for (let i = 0; i < 20; i++) {
+                const width = Math.random() * (PLATFORM_WIDTH_MAX - PLATFORM_WIDTH_MIN) + PLATFORM_WIDTH_MIN;
+                const gap = Math.random() * (PLATFORM_GAP_MAX - PLATFORM_GAP_MIN) + PLATFORM_GAP_MIN;
+                const y = canvas.height - 50 - Math.random() * 100;
+                
+                platforms.push({
+                    x: lastX + gap,
+                    y: y,
+                    width: width,
+                    height: 20
+                });
+                
+                lastX = platforms[platforms.length - 1].x + width;
+            }
+        }
+        
+        // Create clouds for background
+        function createClouds() {
+            for (let i = 0; i < 20; i++) {
+                clouds.push({
+                    x: Math.random() * canvas.width * 3,
+                    y: Math.random() * (canvas.height / 2),
+                    size: Math.random() * 30 + 20,
+                    speed: Math.random() * 0.5 + 0.2
+                });
+            }
+        }
+        
+        // Draw game
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#0a0a14';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a0a14');
+            gradient.addColorStop(1, '#1a0a2e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw clouds with parallax effect
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            clouds.forEach(cloud => {
+                const x = cloud.x - cameraOffset * cloud.speed;
+                if (x > -cloud.size && x < canvas.width + cloud.size) {
+                    ctx.beginPath();
+                    ctx.arc(x, cloud.y, cloud.size, 0, Math.PI * 2);
+                    ctx.arc(x + cloud.size * 0.8, cloud.y - cloud.size * 0.2, cloud.size * 0.6, 0, Math.PI * 2);
+                    ctx.arc(x - cloud.size * 0.8, cloud.y, cloud.size * 0.7, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            
+            // Draw platforms
+            platforms.forEach(platform => {
+                const x = platform.x - cameraOffset;
+                if (x > -platform.width && x < canvas.width) {
+                    // Platform with 3D effect
+                    const platformGradient = ctx.createLinearGradient(
+                        x, platform.y,
+                        x, platform.y + platform.height
+                    );
+                    platformGradient.addColorStop(0, '#00f3ff');
+                    platformGradient.addColorStop(1, '#bd00ff');
+                    ctx.fillStyle = platformGradient;
+                    ctx.fillRect(x, platform.y, platform.width, platform.height);
+                    
+                    // Platform highlight
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.fillRect(x, platform.y, platform.width, 3);
+                }
+            });
+            
+            // Draw player (stick character)
+            ctx.fillStyle = '#00f3ff';
+            
+            // Draw body
+            ctx.fillRect(
+                player.x - cameraOffset, 
+                player.y, 
+                player.width, 
+                player.height
+            );
+            
+            // Draw head
+            ctx.beginPath();
+            ctx.arc(
+                player.x - cameraOffset + player.width / 2,
+                player.y - 10,
+                10,
+                0,
+                Math.PI * 2
+            );
+            ctx.fill();
+            
+            // Draw eyes
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(
+                player.x - cameraOffset + player.width / 2 - 3,
+                player.y - 12,
+                2,
+                0,
+                Math.PI * 2
+            );
+            ctx.arc(
+                player.x - cameraOffset + player.width / 2 + 3,
+                player.y - 12,
+                2,
+                0,
+                Math.PI * 2
+            );
+            ctx.fill();
+        }
+        
+        // Update game state
+        function update() {
+            if (gamePaused) return;
+            
+            // Increase speed over time
+            speed += SPEED_INCREMENT;
+            speedElement.textContent = speed.toFixed(1);
+            
+            // Move camera with player
+            cameraOffset = player.x - 200;
+            
+            // Apply gravity to player
+            player.dy += GRAVITY;
+            player.y += player.dy;
+            
+            // Move player forward
+            player.x += speed;
+            distance = player.x / 10;
+            distanceElement.textContent = Math.floor(distance);
+            
+            // Check if player is on a platform
+            let onPlatform = false;
+            for (let platform of platforms) {
+                if (
+                    player.x + player.width > platform.x &&
+                    player.x < platform.x + platform.width &&
+                    player.y + player.height >= platform.y &&
+                    player.y + player.height <= platform.y + 20 &&
+                    player.dy > 0
+                ) {
+                    player.y = platform.y - player.height;
+                    player.dy = 0;
+                    player.isJumping = false;
+                    onPlatform = true;
+                    break;
+                }
+            }
+            
+            // Check if player fell off the screen
+            if (player.y > canvas.height) {
+                gameOver();
+                return;
+            }
+            
+            // Generate new platforms as player moves forward
+            const lastPlatform = platforms[platforms.length - 1];
+            if (lastPlatform.x - cameraOffset < canvas.width + 500) {
+                const width = Math.random() * (PLATFORM_WIDTH_MAX - PLATFORM_WIDTH_MIN) + PLATFORM_WIDTH_MIN;
+                const gap = Math.random() * (PLATFORM_GAP_MAX - PLATFORM_GAP_MIN) + PLATFORM_GAP_MIN;
+                const y = canvas.height - 50 - Math.random() * 100;
+                
+                platforms.push({
+                    x: lastPlatform.x + lastPlatform.width + gap,
+                    y: y,
+                    width: width,
+                    height: 20
+                });
+            }
+            
+            // Remove platforms that are far behind
+            while (platforms.length > 0 && platforms[0].x + platforms[0].width < cameraOffset - 100) {
+                platforms.shift();
+            }
+            
+            // Move clouds
+            clouds.forEach(cloud => {
+                cloud.x -= speed * cloud.speed * 0.2;
+                if (cloud.x < -100) {
+                    cloud.x = canvas.width * 3 + Math.random() * 500;
+                    cloud.y = Math.random() * (canvas.height / 2);
+                }
+            });
+        }
+        
+        // Player jump
+        function jump() {
+            if (!gameRunning || gamePaused) return;
+            
+            // Check if player is on a platform
+            for (let platform of platforms) {
+                if (
+                    player.x + player.width > platform.x &&
+                    player.x < platform.x + platform.width &&
+                    player.y + player.height >= platform.y &&
+                    player.y + player.height <= platform.y + 20
+                ) {
+                    player.dy = JUMP_FORCE;
+                    player.isJumping = true;
+                    jumps++;
+                    jumpsElement.textContent = jumps;
+                    break;
+                }
+            }
+        }
+        
+        // Game over
+        function gameOver() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            finalDistanceElement.textContent = Math.floor(distance);
+            finalJumpsElement.textContent = jumps;
+            gameOverScreen.classList.remove('hidden');
+        }
+        
+        // Game loop
+        function gameStep() {
+            update();
+            draw();
+        }
+        
+        // Start game
+        function startGame() {
+            initGame();
+            gameRunning = true;
+            gameLoop = setInterval(gameStep, 1000 / 60); // 60 FPS
+        }
+        
+        // Toggle pause
+        function togglePause() {
+            gamePaused = !gamePaused;
+            pauseBtn.textContent = gamePaused ? 'Resume' : 'Pause';
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Tutorial event listeners
+        tutorialBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            tutorialScreen.classList.remove('hidden');
+        });
+        
+        closeTutorialBtn.addEventListener('click', () => {
+            tutorialScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        });
+        
+        // Keyboard input
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                jump();
+                e.preventDefault();
+            }
+        });
+        
+        // Touch input for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+        
+        // Click input
+        canvas.addEventListener('click', () => {
+            jump();
+        });
+        
+        // Custom cursor
+        const gamingCursor = document.querySelector('.gaming-cursor');
+        let cursorPosX = 0;
+        let cursorPosY = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let animationId;
+        
+        function updateCursorPosition() {
+            cursorPosX += (mouseX - cursorPosX) / 5;
+            cursorPosY += (mouseY - cursorPosY) / 5;
+            gamingCursor.style.left = cursorPosX + 'px';
+            gamingCursor.style.top = cursorPosY + 'px';
+            animationId = requestAnimationFrame(updateCursorPosition);
+        }
+        
+        // Start the cursor animation loop immediately
+        animationId = requestAnimationFrame(updateCursorPosition);
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!animationId) {
+                animationId = requestAnimationFrame(updateCursorPosition);
+            }
+        });
+        
+        // Cursor hover effects
+        const interactiveElements = document.querySelectorAll('button');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                gamingCursor.classList.add('locked');
+            });
+            element.addEventListener('mouseleave', () => {
+                gamingCursor.classList.remove('locked');
+            });
+        });
+    </script>
+</body>
+</html>

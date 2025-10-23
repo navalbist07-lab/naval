@@ -1,0 +1,245 @@
+/* Stats Page Styles */
+
+.stats-hero {
+    padding: 100px 0 50px;
+    background: var(--darker-bg);
+    min-height: 100vh;
+}
+
+.stats-hero h1 {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.stats-hero h1 span {
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stats-subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-gray);
+    margin-bottom: 3rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.stat-card {
+    background: rgba(20, 20, 40, 0.5);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 243, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.stat-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(0, 243, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+}
+
+/* Theme-specific stat card styles */
+[data-theme="inferno-red"] .stat-card {
+    border: 1px solid rgba(255, 136, 0, 0.1);
+}
+
+[data-theme="inferno-red"] .stat-card:hover {
+    border-color: rgba(255, 136, 0, 0.3);
+    box-shadow: 0 0 30px rgba(255, 136, 0, 0.2);
+}
+
+[data-theme="electric-blue"] .stat-card {
+    border: 1px solid rgba(0, 136, 255, 0.1);
+}
+
+[data-theme="electric-blue"] .stat-card:hover {
+    border-color: rgba(0, 136, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 136, 255, 0.2);
+}
+
+[data-theme="toxic-green"] .stat-card {
+    border: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+[data-theme="toxic-green"] .stat-card:hover {
+    border-color: rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+}
+
+[data-theme="galaxy-purple"] .stat-card {
+    border: 1px solid rgba(189, 0, 255, 0.1);
+}
+
+[data-theme="galaxy-purple"] .stat-card:hover {
+    border-color: rgba(189, 0, 255, 0.3);
+    box-shadow: 0 0 30px rgba(189, 0, 255, 0.2);
+}
+
+.game-header {
+    padding: 1.5rem;
+    background: rgba(10, 10, 20, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+}
+
+/* Theme-specific game header styles */
+[data-theme="inferno-red"] .game-header {
+    border-bottom: 1px solid rgba(255, 136, 0, 0.1);
+}
+
+[data-theme="electric-blue"] .game-header {
+    border-bottom: 1px solid rgba(0, 136, 255, 0.1);
+}
+
+[data-theme="toxic-green"] .game-header {
+    border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+}
+
+[data-theme="galaxy-purple"] .game-header {
+    border-bottom: 1px solid rgba(189, 0, 255, 0.1);
+}
+
+.game-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.game-header h3 {
+    font-size: 1.5rem;
+}
+
+.stat-content {
+    padding: 1.5rem;
+}
+
+.stat-item {
+    margin-bottom: 1.5rem;
+}
+
+.stat-item:last-child {
+    margin-bottom: 0;
+}
+
+.stat-label {
+    display: block;
+    color: var(--text-gray);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    border-radius: 5px;
+    position: relative;
+}
+
+.progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progress-glow 2s infinite;
+}
+
+@keyframes progress-glow {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.progress-container span {
+    color: var(--neon-blue);
+    font-weight: bold;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .stats-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .stats-hero {
+        padding: 80px 0 30px;
+    }
+    
+    .stats-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .stats-subtitle {
+        font-size: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .progress-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .progress-container span {
+        text-align: left;
+    }
+}

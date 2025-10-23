@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Racer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a14, #1a0a2e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            cursor: none;
+        }
+        
+        h1 {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        canvas {
+            background: #0a0a14;
+            border: 2px solid #00f3ff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            width: 100%;
+            display: block;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .info-item {
+            background: rgba(20, 20, 40, 0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            backdrop-filter: blur(5px);
+            font-weight: bold;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 10px;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00f3ff, #bd00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .screen p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+        
+        .tutorial-content {
+            max-width: 80%;
+            margin-bottom: 30px;
+        }
+        
+        .tutorial-step {
+            background: rgba(20, 20, 40, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .tutorial-step h3 {
+            color: #00f3ff;
+            margin-top: 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .instructions {
+            margin-top: 15px;
+            color: #aaaaaa;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+        
+        /* Custom Gaming Crosshair Cursor */
+        .gaming-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        .gaming-cursor .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background-color: #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line,
+        .gaming-cursor .vertical-line {
+            position: absolute;
+            background-color: #00f3ff;
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .horizontal-line {
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 2px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .vertical-line {
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+
+        .gaming-cursor .inner-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #00f3ff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px #00f3ff;
+            transition: all 0.2s ease;
+        }
+
+        .gaming-cursor .outer-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .gaming-cursor.locked .center-dot {
+            width: 2px;
+            height: 2px;
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055, 0 0 30px #ff0055;
+        }
+
+        .gaming-cursor.locked .horizontal-line,
+        .gaming-cursor.locked .vertical-line {
+            background-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            width: 15px;
+        }
+
+        .gaming-cursor.locked .inner-ring {
+            width: 15px;
+            height: 15px;
+            border-color: #ff0055;
+            box-shadow: 0 0 10px #ff0055;
+            animation: pulse 0.5s ease;
+        }
+
+        .gaming-cursor.locked .outer-ring {
+            width: 35px;
+            height: 35px;
+            border-color: rgba(255, 0, 85, 0.7);
+            box-shadow: 0 0 15px #ff0055;
+            animation: pulse-ring 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Gaming Crosshair Cursor -->
+    <div class="gaming-cursor">
+        <div class="center-dot"></div>
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
+        <div class="inner-ring"></div>
+        <div class="outer-ring"></div>
+    </div>
+    
+    <h1>Neon Racer</h1>
+    
+    <div class="game-container">
+        <div class="game-info">
+            <div class="info-item">Score: <span id="score">0</span></div>
+            <div class="info-item">Speed: <span id="speed">0</span> mph</div>
+            <div class="info-item">Coins: <span id="coins">0</span></div>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        
+        <div id="startScreen" class="screen">
+            <h2>Neon Racer</h2>
+            <p>Race through the neon-lit city! Avoid obstacles and collect coins to increase your score. The game gets faster over time!</p>
+            <button id="tutorialBtn">How to Play</button>
+            <button id="startBtn">Start Race</button>
+        </div>
+        
+        <div id="tutorialScreen" class="screen hidden">
+            <h2>How to Play</h2>
+            <div class="tutorial-content">
+                <div class="tutorial-step">
+                    <h3>Controls</h3>
+                    <p>Use the <strong>LEFT</strong> and <strong>RIGHT</strong> arrow keys to move your car</p>
+                    <p>Stay in one of three lanes to avoid obstacles</p>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Objective</h3>
+                    <p>Survive as long as possible while driving at increasing speeds</p>
+                    <p>Avoid crashing into obstacles</p>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Scoring</h3>
+                    <p>Each obstacle passed: <strong>+5 points</strong></p>
+                    <p>Each coin collected: <strong>+20 points</strong></p>
+                    <p>Speed increases over time for higher scores</p>
+                </div>
+                <div class="tutorial-step">
+                    <h3>Power-ups</h3>
+                    <p>Coins appear randomly - collect them for bonus points</p>
+                    <p>The game gets progressively faster</p>
+                </div>
+            </div>
+            <button id="backToStartBtn">Back to Menu</button>
+        </div>
+        
+        <div id="gameOverScreen" class="screen hidden">
+            <h2>Crash!</h2>
+            <p>Your final score: <span id="finalScore">0</span></p>
+            <p>Coins collected: <span id="finalCoins">0</span></p>
+            <button id="restartBtn">Race Again</button>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="pauseBtn">Pause</button>
+    </div>
+    
+    <div class="instructions">
+        <p><strong>Controls:</strong> Use ← → arrow keys to move your car</p>
+    </div>
+
+    <script>
+        // Game constants
+        const ROAD_WIDTH = 300;
+        const LANE_WIDTH = ROAD_WIDTH / 3;
+        const CAR_WIDTH = 40;
+        const CAR_HEIGHT = 70;
+        const OBSTACLE_WIDTH = 40;
+        const OBSTACLE_HEIGHT = 40;
+        const COIN_SIZE = 20;
+        const INITIAL_SPEED = 5;
+        const SPEED_INCREMENT = 0.001;
+        
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const speedElement = document.getElementById('speed');
+        const coinsElement = document.getElementById('coins');
+        const finalScoreElement = document.getElementById('finalScore');
+        const finalCoinsElement = document.getElementById('finalCoins');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        
+        // Set canvas dimensions
+        function setCanvasDimensions() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            setCanvasDimensions();
+            if (gameRunning && !gamePaused) {
+                // Update car position when window is resized
+                const roadX = (canvas.width - ROAD_WIDTH) / 2;
+                car.x = roadX + car.lane * LANE_WIDTH + (LANE_WIDTH - car.width) / 2;
+            }
+        });
+        
+        // Set canvas dimensions when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setCanvasDimensions();
+        });
+        
+        // Game state
+        let score = 0;
+        let coins = 0;
+        let speed = INITIAL_SPEED;
+        let gameRunning = false;
+        let gamePaused = false;
+        let gameLoop;
+        let roadOffset = 0;
+        let car = {
+            x: 0, // Will be calculated based on lane
+            y: 0, // Will be calculated in initGame
+            width: CAR_WIDTH,
+            height: CAR_HEIGHT,
+            lane: 1 // 0 = left, 1 = center, 2 = right
+        };
+        let obstacles = [];
+        let coinsArray = [];
+        let keys = {};
+        
+        // Initialize game
+        function initGame() {
+            // Set canvas dimensions
+            setCanvasDimensions();
+            
+            // Reset game state
+            score = 0;
+            coins = 0;
+            speed = INITIAL_SPEED;
+            roadOffset = 0;
+            obstacles = [];
+            coinsArray = [];
+            
+            // Set car to center lane
+            car.lane = 1;
+            car.y = canvas.height - CAR_HEIGHT - 20;
+            
+            // Update UI
+            scoreElement.textContent = score;
+            speedElement.textContent = Math.round(speed);
+            coinsElement.textContent = coins;
+            
+            // Hide screens
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+        }
+        
+        // Draw game
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#0a0a14';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw road
+            const roadX = (canvas.width - ROAD_WIDTH) / 2;
+            ctx.fillStyle = '#111122';
+            ctx.fillRect(roadX, 0, ROAD_WIDTH, canvas.height);
+            
+            // Draw road markings
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([20, 30]);
+            ctx.lineDashOffset = -roadOffset;
+            
+            // Center line
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+            
+            // Lane dividers
+            ctx.beginPath();
+            ctx.moveTo(roadX + LANE_WIDTH, 0);
+            ctx.lineTo(roadX + LANE_WIDTH, canvas.height);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(roadX + LANE_WIDTH * 2, 0);
+            ctx.lineTo(roadX + LANE_WIDTH * 2, canvas.height);
+            ctx.stroke();
+            
+            ctx.setLineDash([]);
+            
+            // Draw road edges with neon glow
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 10;
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(roadX, 0);
+            ctx.lineTo(roadX, canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(roadX + ROAD_WIDTH, 0);
+            ctx.lineTo(roadX + ROAD_WIDTH, canvas.height);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            // Update car position based on lane (this ensures the car is always in the correct lane)
+            const roadXPos = (canvas.width - ROAD_WIDTH) / 2;
+            car.x = roadXPos + car.lane * LANE_WIDTH + (LANE_WIDTH - car.width) / 2;
+            
+            // Draw car with 3D effect
+            const carGradient = ctx.createLinearGradient(car.x, car.y, car.x, car.y + car.height);
+            carGradient.addColorStop(0, '#00f3ff');
+            carGradient.addColorStop(1, '#bd00ff');
+            ctx.fillStyle = carGradient;
+            ctx.fillRect(car.x, car.y, car.width, car.height);
+            
+            // Car details
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(car.x + 5, car.y + 5, car.width - 10, 10); // windshield
+            ctx.fillRect(car.x + 5, car.y + car.height - 15, 10, 10); // wheel
+            ctx.fillRect(car.x + car.width - 15, car.y + car.height - 15, 10, 10); // wheel
+            
+            // Draw obstacles
+            obstacles.forEach(obstacle => {
+                // Obstacle with 3D effect
+                const obstacleGradient = ctx.createLinearGradient(
+                    obstacle.x, obstacle.y, 
+                    obstacle.x, obstacle.y + obstacle.height
+                );
+                obstacleGradient.addColorStop(0, '#ff0055');
+                obstacleGradient.addColorStop(1, '#bd00ff');
+                ctx.fillStyle = obstacleGradient;
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                
+                // Obstacle details
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(obstacle.x + 10, obstacle.y + 10, obstacle.width - 20, 5);
+                ctx.fillRect(obstacle.x + 10, obstacle.y + obstacle.height - 15, obstacle.width - 20, 5);
+            });
+            
+            // Draw coins
+            coinsArray.forEach(coin => {
+                ctx.beginPath();
+                ctx.arc(coin.x, coin.y, coin.size, 0, Math.PI * 2);
+                
+                // Create gradient for glowing effect
+                const gradient = ctx.createRadialGradient(
+                    coin.x, coin.y, 0,
+                    coin.x, coin.y, coin.size
+                );
+                gradient.addColorStop(0, '#ffffff');
+                gradient.addColorStop(0.7, '#ffff00');
+                gradient.addColorStop(1, '#ff8800');
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                // Add glow effect
+                ctx.shadowColor = '#ffff00';
+                ctx.shadowBlur = 15;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+        }
+        
+        // Update game state
+        function update() {
+            if (gamePaused) return;
+            
+            // Update road offset for scrolling effect
+            roadOffset += speed;
+            if (roadOffset > 50) roadOffset = 0;
+            
+            // Increase speed over time
+            speed += SPEED_INCREMENT;
+            speedElement.textContent = Math.round(speed);
+            
+            // Move car based on lane
+            const roadX = (canvas.width - ROAD_WIDTH) / 2;
+            car.x = roadX + car.lane * LANE_WIDTH + (LANE_WIDTH - car.width) / 2;
+            
+            // Spawn obstacles
+            if (Math.random() < 0.03) {
+                const lane = Math.floor(Math.random() * 3);
+                const obstacleX = roadX + lane * LANE_WIDTH + (LANE_WIDTH - OBSTACLE_WIDTH) / 2;
+                obstacles.push({
+                    x: obstacleX,
+                    y: -OBSTACLE_HEIGHT,
+                    width: OBSTACLE_WIDTH,
+                    height: OBSTACLE_HEIGHT
+                });
+            }
+            
+            // Spawn coins
+            if (Math.random() < 0.02) {
+                const lane = Math.floor(Math.random() * 3);
+                const coinX = roadX + lane * LANE_WIDTH + LANE_WIDTH / 2;
+                coinsArray.push({
+                    x: coinX,
+                    y: -COIN_SIZE,
+                    size: COIN_SIZE
+                });
+            }
+            
+            // Move obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].y += speed;
+                
+                // Remove obstacles that are off screen
+                if (obstacles[i].y > canvas.height) {
+                    obstacles.splice(i, 1);
+                    score += 5;
+                    scoreElement.textContent = score;
+                    continue;
+                }
+                
+                // Check collision with car
+                if (
+                    car.x < obstacles[i].x + obstacles[i].width &&
+                    car.x + car.width > obstacles[i].x &&
+                    car.y < obstacles[i].y + obstacles[i].height &&
+                    car.y + car.height > obstacles[i].y
+                ) {
+                    gameOver();
+                    return;
+                }
+            }
+            
+            // Move coins
+            for (let i = coinsArray.length - 1; i >= 0; i--) {
+                coinsArray[i].y += speed;
+                
+                // Remove coins that are off screen
+                if (coinsArray[i].y > canvas.height) {
+                    coinsArray.splice(i, 1);
+                    continue;
+                }
+                
+                // Check collision with car
+                const distance = Math.sqrt(
+                    Math.pow(car.x + car.width/2 - coinsArray[i].x, 2) +
+                    Math.pow(car.y + car.height/2 - coinsArray[i].y, 2)
+                );
+                
+                if (distance < (car.width/2 + coinsArray[i].size)) {
+                    coinsArray.splice(i, 1);
+                    coins++;
+                    score += 20;
+                    coinsElement.textContent = coins;
+                    scoreElement.textContent = score;
+                }
+            }
+        }
+        
+        // Move car
+        function moveCar() {
+            if (keys['ArrowLeft'] && car.lane > 0) {
+                car.lane--;
+            }
+            if (keys['ArrowRight'] && car.lane < 2) {
+                car.lane++;
+            }
+        }
+        
+        // Game over
+        function gameOver() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            finalScoreElement.textContent = score;
+            finalCoinsElement.textContent = coins;
+            gameOverScreen.classList.remove('hidden');
+        }
+        
+        // Game loop
+        function gameStep() {
+            moveCar();
+            update();
+            draw();
+        }
+        
+        // Start game
+        function startGame() {
+            initGame();
+            gameRunning = true;
+            gameLoop = setInterval(gameStep, 1000 / 60); // 60 FPS
+        }
+        
+        // Toggle pause
+        function togglePause() {
+            gamePaused = !gamePaused;
+            pauseBtn.textContent = gamePaused ? 'Resume' : 'Pause';
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Tutorial event listeners
+        const tutorialBtn = document.getElementById('tutorialBtn');
+        const backToStartBtn = document.getElementById('backToStartBtn');
+        const tutorialScreen = document.getElementById('tutorialScreen');
+        
+        tutorialBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            tutorialScreen.classList.remove('hidden');
+        });
+        
+        backToStartBtn.addEventListener('click', () => {
+            tutorialScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        });
+        
+        // Keyboard input
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        // Custom cursor
+        const gamingCursor = document.querySelector('.gaming-cursor');
+        let cursorPosX = 0;
+        let cursorPosY = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let animationId;
+        
+        function updateCursorPosition() {
+            cursorPosX += (mouseX - cursorPosX) / 5;
+            cursorPosY += (mouseY - cursorPosY) / 5;
+            gamingCursor.style.left = cursorPosX + 'px';
+            gamingCursor.style.top = cursorPosY + 'px';
+            animationId = requestAnimationFrame(updateCursorPosition);
+        }
+        
+        // Start the cursor animation loop immediately
+        animationId = requestAnimationFrame(updateCursorPosition);
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!animationId) {
+                animationId = requestAnimationFrame(updateCursorPosition);
+            }
+        });
+        
+        // Cursor hover effects
+        const interactiveElements = document.querySelectorAll('button');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                gamingCursor.classList.add('locked');
+            });
+            element.addEventListener('mouseleave', () => {
+                gamingCursor.classList.remove('locked');
+            });
+        });
+    </script>
+</body>
+</html>
